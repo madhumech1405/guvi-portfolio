@@ -1,8 +1,35 @@
-import React from 'react'
+import  { useState } from 'react'
 import { AiOutlineFacebook, AiOutlineLinkedin, AiOutlineTwitter } from "react-icons/ai";
 import AboutImg from '../assets/about.png'
+import {toast} from 'react-toastify'
+import axios from 'axios'
 
 export default function Contat() {
+const [name,setname]=useState("")
+const [email,setEmail]=useState("")
+const [msg,setmsg]=useState("")
+//handle sumit buton
+const handleSubmit=async (e)=>{
+  e.preventDefault()
+  try{
+    if(!name||!email||msg){
+      toast.error('please provide all field');
+    }
+    const res=await axios.post('http://localhost:3001/api/v1/portfolio/sendEmail',{name,email,msg})
+    if(res.data.success){
+            toast.success(res.data.message)
+            setname('');
+            setEmail('');
+            setmsg('');
+
+    }else{
+      toast.error(res.data.message)
+    }
+  }catch(error){
+    console.log(error)
+  }
+}
+
   const config={
     subtitle:"im full stack developer",
     social:{
@@ -10,6 +37,7 @@ export default function Contat() {
       facebook:"https://www.facebook.com/profile.php?id=100010157941391",
       linkedin:"https://www.linkedin.com/in/madhusudhanan-j-13907a199/"
     }
+    
   }
   return (
     <section className='flex  flex-col md:flex-row  bg-primary  px-5'id='concat' >
@@ -32,19 +60,19 @@ export default function Contat() {
       </div>
       <div className='px-5 py-1'>
       
-        <input className='mb-3' type='text' name="name" placeholder='write your name'/>
+        <input className='mb-3' type='text' name="name" value={name} onChange={(e)=>setname(e.target.value)} placeholder='write your name'/>
 
       </div>
       <div className='px-5 py-1'>
-        <input className="mb-3" type='email' name='email' placeholder='enter you email '/>
+        <input className="mb-3" type='email' name='email' value={email} onChange={(e)=>setEmail(e.target.value)} placeholder='enter you email '/>
       </div>
       <div className='px-5 py-1 '>
         
-        <input className='mb3  h-10 'type='mag ' placeholder='witre your massgge'/>
+        <input className='mb3  h-10 'type='mag ' value={msg} onChange={(e)=>setmsg(e.target.value)}  placeholder='witre your massgge'/>
       
       </div>
       <div className='px-5 py-5'>
-        <button className='btn' type='sumbit'>send massgge</button>
+        <button className='btn'  onClick={handleSubmit}>send massgge</button>
       </div>
       </div>
 
